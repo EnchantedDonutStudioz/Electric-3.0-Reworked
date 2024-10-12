@@ -1,8 +1,20 @@
 const form = document.getElementById("f");
 const input = document.getElementById("i");
-const connection = new BareMux.BareMuxConnection("/baremux/worker.js")
 
 
+async function init() {
+    try {
+        const connection = new BareMux.BareMuxConnection("/baremux/worker.js")
+        let wispUrl = (location.protocol === "https:" ? "wss" : "ws") + "://" + location.host + "/wisp/";
+        if (await connection.getTransport() !== "/epoxy/index.mjs") {
+            await connection.setTransport("/epoxy/index.mjs", [{ wisp: wispUrl }]);
+            console.log("Using websocket transport");
+        }
+    } catch (error) {
+        console.error("Error setting up BareMux transport:", error);
+    }
+}
+init();
 
 if (form && input) {
     form.addEventListener("submit", async (event) => {
@@ -23,8 +35,7 @@ if (form && input) {
 
             console.log("Registering service worker...");
         } catch (err) {
-            error.textContent = "Failed to register service worker.";
-            errorCode.textContent = err.toString();
+            err.textContent = err.toString();
             throw err;
         }
         var url = input.value;
@@ -36,11 +47,11 @@ if (form && input) {
         }
 
 
-        let wispUrl = (location.protocol === "https:" ? "wss" : "ws") + "://" + location.host + "/wisp/";
-        if (await connection.getTransport() !== "/epoxy/index.mjs") {
-            await connection.setTransport("/epoxy/index.mjs", [{ wisp: wispUrl }]);
-        }
 
-        console.log(__uv$config.encodeUrl(url));
+        url = __uv$config.encodeUrl(url);
+
+        localStorage.setItem("url", url);
+
+        window.location.href = "/browser.html";
     });
 }

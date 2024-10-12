@@ -7,11 +7,10 @@ import { join } from "node:path";
 import { hostname } from "node:os";
 import wisp from "wisp-server-node";
 import { fileURLToPath } from 'url';
-import { dirname } from 'path';
-import { BareMuxConnection } from "@mercuryworkshop/bare-mux"
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename)
+
+
+const __dirname = process.cwd();
 const app = express();
 
 const publicPath = join(__dirname, "public");
@@ -28,7 +27,7 @@ app.use((req, res) => {
 });
 
 const server = createServer();
-const connection = new BareMuxConnection("/baremux/worker.js");
+
 
 server.on("request", (req, res) => {
     res.setHeader("Cross-Origin-Opener-Policy", "anonymous");
@@ -58,6 +57,7 @@ server.on("listening", () => {
         `\thttp://${address.family === "IPv6" ? `[${address.address}]` : address.address
         }:${address.port}`
     );
+
 });
 
 // https://expressjs.com/en/advanced/healthcheck-graceful-shutdown.html
