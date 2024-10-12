@@ -6,8 +6,6 @@ import { baremuxPath } from "@mercuryworkshop/bare-mux/node";
 import { join } from "node:path";
 import { hostname } from "node:os";
 import wisp from "wisp-server-node";
-import { fileURLToPath } from 'url';
-
 
 
 const __dirname = process.cwd();
